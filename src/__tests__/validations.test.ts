@@ -1,4 +1,4 @@
-import { buyerSchema, csvRowSchema } from "../src/lib/validations";
+import { buyerSchema } from "../lib/validations";
 import {
   City,
   PropertyType,
@@ -16,7 +16,7 @@ describe("Buyer Validation", () => {
       phone: "1234567890",
       city: City.Chandigarh,
       propertyType: PropertyType.Apartment,
-      bhk: "Two" as any,
+      bhk: "Two",
       purpose: Purpose.Buy,
       budgetMin: 5000000,
       budgetMax: 7000000,
@@ -54,7 +54,7 @@ describe("Buyer Validation", () => {
       propertyType: PropertyType.Plot,
       purpose: Purpose.Buy,
       budgetMin: 7000000,
-      budgetMax: 5000000, // Max < Min
+      budgetMax: 5000000,
       timeline: Timeline.ZeroToThreeMonths,
       source: Source.Website,
     };
