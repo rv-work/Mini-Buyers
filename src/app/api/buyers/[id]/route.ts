@@ -16,10 +16,13 @@ import {
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
+
+    // Await the params Promise
+    const { id } = await params;
 
     const rateLimitResult = rateLimit(`update-buyer-${user.id}`, 10, 60000);
     if (!rateLimitResult.success) {
@@ -34,7 +37,7 @@ export async function PUT(
     const data = buyerSchema.parse(updateData);
 
     const existingBuyer = await prisma.buyer.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingBuyer) {
@@ -76,7 +79,7 @@ export async function PUT(
     };
 
     const buyer = await prisma.buyer.update({
-      where: { id: params.id },
+      where: { id },
       data: updatePayload,
     });
 
@@ -114,13 +117,16 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser();
 
+    // Await the params Promise
+    const { id } = await params;
+
     const existingBuyer = await prisma.buyer.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingBuyer) {
@@ -132,7 +138,7 @@ export async function DELETE(
     }
 
     await prisma.buyer.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: "Buyer deleted successfully" });
