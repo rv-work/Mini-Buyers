@@ -10,6 +10,15 @@
 !.yarn/releases
 !.yarn/versions
 
+
+node_modules/
+.next/
+.env*
+!.env.example
+dist/
+.DS_Store
+*.log
+
 # testing
 /coverage
 
@@ -39,3 +48,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma

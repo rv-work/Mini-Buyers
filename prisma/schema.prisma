@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  buyers        Buyer[]
+  buyerHistory  BuyerHistory[]
+
+  @@map("users")
+}
+
+enum City {
+  Chandigarh
+  Mohali
+  Zirakpur
+  Panchkula
+  Other
+}
+
+enum PropertyType {
+  Apartment
+  Villa
+  Plot
+  Office
+  Retail
+}
+
+enum BHK {
+  Studio @map("Studio")
+  One    @map("1")
+  Two    @map("2")
+  Three  @map("3")
+  Four   @map("4")
+}
+
+enum Purpose {
+  Buy
+  Rent
+}
+
+enum Timeline {
+  ZeroToThreeMonths   @map("0-3m")
+  ThreeToSixMonths    @map("3-6m")
+  MoreThanSixMonths   @map(">6m")
+  Exploring           @map("Exploring")
+}
+
+enum Source {
+  Website
+  Referral
+  WalkIn   @map("Walk-in")
+  Call
+  Other
+}
+
+enum Status {
+  New
+  Qualified
+  Contacted
+  Visited
+  Negotiation
+  Converted
+  Dropped
+}
+
+model Buyer {
+  id           String       @id @default(cuid())
+  fullName     String
+  email        String?
+  phone        String
+  city         City
+  propertyType PropertyType
+  bhk          BHK?
+  purpose      Purpose
+  budgetMin    Int?
+  budgetMax    Int?
+  timeline     Timeline
+  source       Source
+  status       Status       @default(New)
+  notes        String?
+  tags         String[]     @default([])
+  
+  ownerId      String
+  owner        User         @relation(fields: [ownerId], references: [id])
+  
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  history      BuyerHistory[]
+
+  @@map("buyers")
+}
+
+model BuyerHistory {
+  id        String   @id @default(cuid())
+  buyerId   String
+  buyer     Buyer    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  
+  changedBy String
+  user      User     @relation(fields: [changedBy], references: [id])
+  
+  changedAt DateTime @default(now())
+  diff      Json
+
+  @@map("buyer_history")
+}
