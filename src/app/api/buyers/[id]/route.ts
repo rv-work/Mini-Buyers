@@ -21,7 +21,6 @@ export async function PUT(
   try {
     const user = await getCurrentUser();
 
-    // Rate limiting (your rateLimit is synchronous)
     const rateLimitResult = rateLimit(`update-buyer-${user.id}`, 10, 60000);
     if (!rateLimitResult.success) {
       return NextResponse.json(
@@ -59,12 +58,10 @@ export async function PUT(
       );
     }
 
-    // Build update object and cast enum-like strings to Prisma enums
     const updatePayload = {
       fullName: data.fullName,
       email: data.email || null,
       phone: data.phone,
-      // cast strings to Prisma enum types
       city: data.city as City,
       propertyType: data.propertyType as PropertyType,
       bhk: data.bhk ? (data.bhk as BHK) : undefined,
