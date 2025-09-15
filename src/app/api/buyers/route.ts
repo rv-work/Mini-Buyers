@@ -79,7 +79,6 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser();
 
-    // Rate limiting
     const rateLimitResult = rateLimit(`create-buyer-${user.id}`, 5, 60000);
     if (!rateLimitResult.success) {
       return NextResponse.json(
